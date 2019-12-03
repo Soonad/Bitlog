@@ -1,0 +1,36 @@
+check_task:
+  container:
+    image: elixir:1.9.4-alpine
+    additional_containers:
+      - name: postgres
+        image: postgres:11-alpine
+        port: 5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+  env:
+    COVERALLS_REPO_TOKEN: ENCRYPTED[dd8eddae1197daaedc50d5a828c12914be6c37f3f69d23ec9b8d6a4dde5c00f9dc57f56d60ed8a64e957d3f4189f4e8e]
+  hex_script: mix local.hex --force
+  rebar_script: mix local.rebar --force
+  mix_deps_cache:
+    folder: deps
+    fingerprint_script: cat mix.lock
+    populate_script: mix deps.get
+  build_cache:
+    folder: _build
+  check_script: mix check
+  exdoc_artifacts:
+    path: "doc/**/*"
+    type: "text/html"
+
+docker_builder:
+  name: Docker
+  only_if: $CIRRUS_REPO_OWNER == 'moonad' && $CIRRUS_BRANCH == 'master'
+  depends_on:
+    - check
+  env:
+    DOCKER_PASSWORD: ENCRYPTED[ed0a2d6d1d1b184a4c424f8485d21a938a92b8aeb607de05a50bea2a0e07eedd5c45f02594d073409c47371a7f0f89cb]
+    DOCKER_USERNAME: ENCRYPTED[876aa6e366dbec45c680ed5dd112b009bdcace5dd32599c29aa4a370e9dff0c8456ba57d438fb859863cebff3bbbf0b3]
+  build_script: docker build --tag moonad/bitlog:latest .
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  push_script: docker push moonad/bitlog:latest

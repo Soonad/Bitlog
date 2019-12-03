@@ -1,0 +1,13 @@
+{
+  "skip_files": [
+    "lib/bitlog_env.ex",
+    "lib/bitlog_web/controller.ex",
+    "lib/bitlog_web/endpoint.ex",
+    "lib/bitlog_web/gettext.ex",
+    "lib/bitlog_web/open_api_spex",
+    "lib/bitlog_web/view.ex",
+    "lib/bitlog/releases.ex",
+    "lib/bitlog/repo.ex",
+    "test/support/"
+  ]
+}
